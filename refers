@@ -1,0 +1,276 @@
+#for sql connection
+conn = pymysql.connect(host='localhost', user='root', password="xbyte", db='amzshmpoalldata')
+car = conn.cursor()
+car.execute("insert into pl values(%s,%s)", (title, product_links))
+            conn.commit()
+            
+            
+            
+            #example of sql 
+            
+            import scrapy
+from scrapy.cmdline import execute
+import scrapy.spiders
+import scrapy.item
+import pymysql
+
+conn = pymysql.connect(host='localhost', user='root', password="xbyte", db='amzshmpoalldata')
+car = conn.cursor()
+headers = {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
+            'Cache-Control': 'no-cache',
+            'Cookie': 'session-id=257-4052855-2026251; i18n-prefs=INR; ubid-acbin=259-4266841-6841730; lc-acbin=en_IN; session-id-time=2082787201l; session-token=DzwkxUG+rlAA7/VRCMaUhba+K6tF3OOPrjvUYEKaglrW/t/hA56kfx4iWFssazwZ6rHDQYTFOmd9et6aQnGrBUvEDsd8cvczYTDuxm7aAOZV0nG74fnk6/xAql+C9ZMPBK6dV+lZKxl/obOKYza7ls9Zw5h33SOG0UsTYOzic1dfAIUGWNNIzHXkDAG/JcKaWndNcHg398W6hdLYJYCLK2G6/N7w2cx2ozA8TmNYZpfkdgyG2HaC8yGxnXkgs+LH2GndDTnUXBzfYCXGU//vjOUP4AKYjEpYSa+fvrFU53PHqh+kuSZ9/XDR927Zjk8LNXXFCjtM7Swjnkjnb/aUnX3p8qK4935j; csm-hit=tb:99NBKCEFVJASSKNRAX6M+s-B2CQ0ZVSV558ZDSNV3KA|1706076686703&t:1706076686703&adb:adblk_no',
+            'Device-Memory': '8',
+            'Downlink': '10',
+            'Dpr': '1',
+            'Ect': '4g',
+            'Pragma': 'no-cache',
+            'Referer': 'https://www.amazon.in/',
+            'Rtt': '250',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Viewport-Width': '1366'
+        }
+
+class amzshmSpider(scrapy.Spider):
+#             yield scrapy.Request(url=main_url, headers=headers, callback=self.parse, meta={'response': response, 'main_url': main_url})der(scrapy.Spider):
+    name = "amzshmSpider"
+    # page request code
+    def start_requests(self):
+        url = "https://www.amazon.in/s?k=shampoo&crid=2L11VFSAEPCTG&sprefix=%2Caps%2C170&ref=nb_sb_ss_recent_1_0_recent"
+
+
+        yield scrapy.Request(url=url, headers=headers, callback=self.parse)
+
+    def parse(self, response):
+        # Xpath of main division tag of amazon shampoo page
+        main = response.xpath('//div[@class="a-section a-spacing-base"]')
+        for i in main:
+            # Xpath of product titles and product links
+            title = i.xpath('.//span[@class="a-size-base-plus a-color-base a-text-normal"]//text()').get()
+            product_link = i.xpath('.//a[@class="a-link-normal s-no-outline"]//@href').get()
+            # database code
+            product_links = ("https://www.amazon.in" + product_link)
+            car.execute("insert into pl values(%s,%s)", (title, product_links))
+            conn.commit()
+            # conn.close()
+        # scrap next pages product title and product links code
+        next_page_xpath = response.xpath('//a[@class="s-pagination-item s-pagination-next s-pagination-button s-pagination-separator"]//@href').get()
+        next_page = "https://www.amazon.in" + next_page_xpath
+
+        if next_page is not None:
+            yield scrapy.Request(url=next_page, headers=headers, callback=self.parse)
+
+
+if __name__ == '__main__':
+    execute('scrapy crawl amzshmSpider'.split())
+            
+            #example of sql over
+            
+            
+            
+
+#sql connection over
+
+
+select query in mongodb : result = tablename.find({'status': "done"})
+for data in results:
+    try:
+        links = data['links']
+        print(links)
+    except Exception as e:
+        print(e)
+update query in mongodb : tablename.update_one({'links': links}, {'$set': {'status': 'complete'}})
+
+
+#mongo_db_connection
+client = pymongo.MongoClient('mongodb://localhost:27017')
+db = client['db_name']
+col = db['collection_name']
+col.insert_One/Many(dict_name)
+
+#mongo_db_connection over
+
+#refernce code structure
+import pymongo
+import requests
+from scrapy.selector import Selector
+from datetime import datetime
+
+client = pymongo.MongoClient('mongodb://localhost:27017')
+db = client['stepstone']
+col = db['tet1']
+col2 = db['fd_job']
+col3 = db['err_exe']
+
+
+def log_error(error_message, link):
+    error_data = {'error_message': error_message, 'link': link, 'timestamp': datetime.now()}
+    col3.insert_one(error_data)
+def data(start, end):
+
+    results = col.find({'status': "Done"}).skip(int(start)).limit(int(end))
+
+    for data1 in results:
+        try:
+            links = data1['links']
+            print(links)
+        except Exception as e:
+            print(e)
+        headers = {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
+            'Cache-Control': 'no-cache',
+            'Cookie': 'USER_HASH_ID=0a1dfac6-3c21-4124-b274-c12531e4b65a; STEPSTONEV5LANG=de; VISITOR_ID=4d999936b12d85c055509756e4f3a7be; s_vi=[CS]v1|a5afe1ee6dbcbb67-992637bc302d8922[CE]; s_fid=a5afe1ee6dbcbb67-992637bc302d8922; CONSENTMGR=c1:0%7Cc2:0%7Cc3:0%7Cc4:0%7Cc5:0%7Cc6:0%7Cc7:0%7Cc8:0%7Cc9:1%7Cc10:0%7Cc11:0%7Cc12:0%7Cc13:0%7Cc14:0%7Cc15:0%7Cts:1706017785778%7Cconsent:true; V5=1; cfid=48b566f3-8493-42a7-bcd2-92d40c52e589; cftoken=0; X-AUTH-CSRF-TOKEN=o58r4sl0cf28m627wdlisroieqqvisqyyq58n2uc; ONLINE_CF=10.146.2.222; _abck=7D8F09936183F222278D0585537CAA34~0~YAAQjydzaKVkbFyNAQAAIZkpXgtxm9NjFwiCE2Yd3tf55nDD56idHeG0n0CmQQLvlj39s04SLYFu9PiiS3/cuVAbnYcBXk4hKVQTB89rd4tWB42KwPszz6YpzFb1Mmfhg5yolcIrAEieAXKw2PNfhpAPWvFOO47D/1lwG/c5EiIhw6pxzxSq2fxHF8hKz9oTErq8dEt86zHomtYxhCEHZPZVh0xvhDxcORmk9zOwVgjkhHdHo47Gs0W9lzBhpmLE5L1aR1i6JHhHQCmS3thoiPl/r968uzfuqH835C2fVj+wYByyvLmKH4nsb37BOFenCf6WzbqXoV1zfb6+H+ulNkl+zeLXDxha/eDRDWpGNhVeQTEwyRlDiY6qd5Yodq/IjhElFwlkJyBLQ2gi0kxbejXNyoh+S4Mm2w==~-1~-1~-1; ak_bmsc=E0D1FB65D369331C439E45C075C7C59E~000000000000000000000000000000~YAAQjydzaKZkbFyNAQAAIZkpXhbDd/Alyyu6K5ymJEiFzwUfUwgnTJKe0yPRSTEiCkvy8viC2FMcbl/x/CmFFiF1ZMJOVG7ToDfCQpKOGBf/7Shj2CQ44QN47Q+T4dR3VMSiS+fyqflOA0UnSUBYZzBBc+WO7pxEiwjyYWm9+wZMUXnJKwbe28PHzsakzi6LlnNuM7WyQAK53B2T5T/ck3oBMMU3IGJIDpiZPZI4gP4lX2VB/7WiBQzNrzJIw90F/b7YWEfzTSj4rlKxuRCjxk+07dh3b/S1QM1M2YVNbHCyJybIIFn/b7A+NeCQW19TJsc38666h42CbHhoDVSzSBjqLHdZe1EnZP/BPRuIKT8cZxivniDzaiMxJfOHTqP6HA==; bm_sz=95375B07FA800FA9E0CF22F4BEDD6883~YAAQjydzaKhkbFyNAQAAIZkpXhZMCr9+D+m0L7DRPcqpIp3Tl7PMP3q76NMJGBHg7UVhR/pQ3ySnM7+KtY63g3izuIdzjzwMaWCsqYJ7ly1bAHeMCq45v/ze4VyRGT0W/bDRAPix9g9Ej8HMloLA5IFC6lZZGpNhGsSyZbTJQv1jjN/OyN/6lG8s+A+W/RB6RTyhyA+VilJasD2j0tMDkCWAbadiCv+v2luOY9U30Cj7lmKbLKejsdSjglheoTqhRbEXe9lzTGaBB3YMJL6psbSHJzV7X+44Qowjhcc8lqvlvljfad8M0I2nga0KDpAmZ/Qmvu+YK58yLqPs8cmlNA==~3490369~4605508; __Host-X-PROFILE-CSRF-SECRET=Sk8NVitFFch9y_tbk_mK0h0a; __Host-X-PROFILE-CSRF-TOKEN=xKDvbGgZ-CiaMkfmEq6XyDApMOHVfTJq3HS8; s_cc=true; bm_sv=AD6AE8139434E30FA87ECFE40FE7D54E~YAAQjydzaDRmbFyNAQAAOrUpXhb8LxQKjKlKAUFQwSqSi4AO8NG7gXdZM1rpkXb+KlLEc6Q9kbBSZujtRbdB4VmkLGF3/OZJ8WzJvT0MctTqvyZy8tk5QsOfB1eoEYsPxaKS5Nm55vHQCOt1tW08wBugJkFwIY/b33cTz/3C1OcefnD8o1FGcTA2WlKizL4vMEcOxh/o56DlkXf5vH2+Vlar1UlEreVFJo48CLrYJiaR+O5yxWrf/2ivVVZZYKBoRrY=~1; utag_main=v_id:018d3694d6d100205829530c2d9005065009305d00868$_sn:12$_se:2$_ss:0$_st:1706683611838$vapi_domain:www.stepstone.de$dc_visit:11$vpn:ext$ses_id:1706681802897%3Bexp-session$_pn:1%3Bexp-session$dlp:1.93%3Bexp-session$qvPageNumber:0%3Bexp-session$qvPreviousUrl:https%3A%2F%2Fwww.stepstone.de%2Fstellenangebote--inside-sales-manager-aviation-all-genders-frankfurt-am-main-home-office-inform-gmbh--10545700-inline.html%3Bexp-session$qvTriggered:false%3Bexp-session$location:Frankfurt%20am%20Main%2C%20Home-Office%3Bexp-session$cid_for_apps:partner_togetherabroad___SP%3Bexp-session$prev_p:Listing%20Page%20Responsive%20Design%3Bexp-session$dc_event:1%3Bexp-session$dc_region:eu-central-1%3Bexp-session; _abck=7D8F09936183F222278D0585537CAA34~-1~YAAQjydzaHGTbFyNAQAA4zEtXgs3MZ4isMg5GdBV1fT857Up/vhGDIA+8Mmykj8C03F01gOFkjY3fBysiE/upwmqNK7CmDBjT+DCR5CcdWkzP2rHr5ytt/6LjeQJyPFWxf8RBofAtA69gwE/9pEc7J0Hi1+ASzIrnr0DQdepgIKJy7YZKcZHHvKO/dKW+xdaEp5YcM7MP9c/1fd5nlRa+IE2hMPncUxy41TOYc//czIxk0CXOPO66eoTnevvgYbGFUthWTrZO2E6+9/aDKtzLq3Mv38wIcLOG3ZhO7OEOFWcgT8PZ9/5y+RLlXlZnWCKy1fdZTcVvv9qSdK/iS5OnWdWawdt8H3FrrjzFmmzlK/L6JILsjxAYRfRsOP0Sl4D2Ydy+M9ALZceRgr/aNVnZq5Zarl/uv3xkQ==~0~-1~-1; ak_bmsc=E0D1FB65D369331C439E45C075C7C59E~000000000000000000000000000000~YAAQjydzaHKTbFyNAQAA4zEtXhb5CyRuz8Xs7qxIG4DGmNdtrsztzJsq8+M/Qo2htBXJ5ksSMMHet89ZgqfFW/jTHA/x7jACELEQqaRIAhH06KnXCpBhlENNxbPGTymaqw3xy9d862T3M3rjlW6HT02zA7eoOgvBvTuKkcKlUHAfx6QBUW+SwxSimINuJpzq/FSD1ZkkfGdaJg4OUngxaBVt5XJnO7XjEOnC9nbn2W2iJOsYd6phQBo9vUIbQkwAPvp3sTpZi9NQVN3pe+YneDqvAW+V3DYg4zkl1iWNyIQ5vV7BHren3PS3xemYRd2P2pImnqETYRlYqVBsKZS8DaM3VWD9zQxAXi6PSP9ROWMdaPbN4smRnuMNdyge41Rrnf4VebnEmmbLkCGm; bm_mi=F00CD5F1B4AD269552F6D70820BE1868~YAAQjydzaHOTbFyNAQAA4zEtXhZpmO7+MpThW/ZfuO/0DPKqFL9IvdO0CrLlgIv0j+HSVqHwP9FFKNtn1Kxj4zsBxOWfE1Lc7DzhuBIXGB+KUWFyei0C/7UCOvRqGp6EQEta1vjVbBDO/b/3W3tHYqnEPWRXpDKdbGa0ZQZCRCKHlztOMFRkz/kQGkIkC+mXCrfy1oB9Px5YhlI+1fGnlqGbv0VWJPYinUwXC3LYK0ExljReHpmaOznBZPm6kYPJP9az2SE0RhLvpbV8QKQssN4d7njfS51kiOkocAg+wFygSLYbApPNHxeDAtXqloRxh4UaEOOqRO4muujsjf5kIZ9mBp1/WCkrRCsryso++H3E74FEyCSjOFlIeVDdAwimndhdi4mZTFji73XE40bIiX7Z7JRXXRJqPNtQrtDzJ8mKA0a16aRAl5d9yYZ4xJY541ntP04stXwqdaAA1BWIlyBnl+7iBdGtrdo=~1; bm_sv=AD6AE8139434E30FA87ECFE40FE7D54E~YAAQjydzaHSTbFyNAQAA4zEtXhYLxn55E5xKWAG7yG11QfPbvImw34fw91Bjm4UzEqV2xUL7iRXOWY3diSgL0ycG74PSDFFvRdQ4FzikfibqdRkMDgbDQNJo29T5v+cSTGvrf6aepn3hHNP3wheSu8L5BjVM1rId2EgZlJarrf45iwLMcDke8/VW5bcs2DcaAH5pMFCgHb2S0CWxpRmBnz4xq7SQDUUQX8uIqX54hqXe4kePGLIVS+EhnwgtTkq/OT0=~1; CIDFORRETURNINGVISIT=partner_togetherabroad___SP%0A; CIDFORRETURNINGVISITISSET=%22yes%22; STEPSTONEV5LANG=de; UXUSER=BLACKLIST%3BA%3B%20%3B; cfid=48b566f3-8493-42a7-bcd2-92d40c52e589; cftoken=0',
+            'Pragma': 'no-cache',
+            'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+            'Sec-Ch-Ua-Mobile': '?1',
+            'Sec-Ch-Ua-Platform': '"Android"',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
+        }
+
+        mydict = {}
+        response = requests.get(url=links, headers=headers)
+        if response.status_code != 200:
+            print("response log ", response.status_code)
+            mydict['status_code'] = response.status_code
+
+        tree2 = Selector(text=response.text)
+
+        try:
+            main = tree2.xpath('//div[@class="reb-main"]').get()
+        except Exception as e:
+            print(e)
+            log_error(f"Error extracting main div: {str(e)}", links)
+            print(log_error)
+        try:
+            mydict['name'] = tree2.xpath('//a[@class="listing-content-provider-zw6cpm"]/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['location'] = tree2.xpath('.//span[@class="listing-content-provider-1whr5zf"]//text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['total_jobs'] = tree2.xpath('.//span[@class="listing-company-content-provider-1jx3vjx"]/text()').getall()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['emp'] = tree2.xpath('.//li[@class="listing-content-provider-l3w8lv at-listing__list-icons_contract-type"]/span/span/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['tiloc'] = tree2.xpath('.//span[@class="listing-content-provider-tcw11"]/span[contains(text(),"Vollzeit")]/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['published'] = tree2.xpath('.//span[@class="listing-content-provider-tcw11"]/span[contains(text(),"Erschienen")]/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict[' profile'] = ''.join(tree2.xpath('//h4[contains(text(),"Your profile")]/../../../following-sibling::div/span/ul/li/text() | .//h4[contains(text(),"Your profile")]/../../../following-sibling::div/span/ul/li/p/text() | .//font[contains(text(),"Your profile")]/../../../../../following-sibling::div/span/ul/li/font/font/text() | .//h4[contains(text(),"Your Qualifications")]/../../../following-sibling::div/span/ul/li/text() | .//h4[contains(text(),"Your Qualifications")]/../../../following-sibling::div/span/ul/li/text() | .//h4[contains(text(),"Ihr Profil")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"Basic qualifications")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"YOU KNOW")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"YOU KNOW")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"Qualifications")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"WE CONVINCE")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"Dein Profil")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"What you can expect")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"We are looking forward to")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"Education, Experience, Knowledge & Skills")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"YOUR SKILLS")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"What you bring to the table")]/../../../following-sibling::div/span/ul/li/text()').getall()).strip()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['final_rating'] = tree2.xpath('//b[@class="listing-company-content-provider-vncav9"]/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['five_star'] = tree2.xpath('.//span[contains(text(),"5")]/../following-sibling::div[@class="listing-company-content-provider-1jx3vjx"]/span/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['four_star'] = tree2.xpath('//span[contains(text(),"4")]/../following-sibling::div[@class="listing-company-content-provider-1jx3vjx"]/span/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['three_star'] = tree2.xpath('//span[contains(text(),"3")]/../following-sibling::div[@class="listing-company-content-provider-1jx3vjx"]/span/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['two_star'] = tree2.xpath('//span[contains(text(),"2")]/../following-sibling::div[@class="listing-company-content-provider-1jx3vjx"]/span/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['one_star'] = tree2.xpath('//span[contains(text(),"1")]/../following-sibling::div[@class="listing-company-content-provider-1jx3vjx"]/span/text()').get()
+        except Exception as e:
+            print(e)
+        try:
+            mydict['des'] = ''.join(tree2.xpath('//h4[contains(text(),"Your tasks")]/../../../following-sibling::div/span/p/text() | .//h4[contains(text(),"Your tasks")]/../../../following-sibling::div/span/ul/li/text() | .//h4[contains(text(),"Your role")]/../../../following-sibling::div/span/p/text() | .//h4[contains(text(),"Your role")]/../../../following-sibling::div/span/ul/li/p/text() | .//h4[contains(text(),"Your tasks")]/../../../following-sibling::div/span/text() | //h4[contains(text(),"Description")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"Ein Job, der zählt: Ihre Aufgaben")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"Ein Job, der zählt: Ihre Aufgaben")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"Introduction")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"YOU ACT")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"YOU ACT")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"Responsibilities")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"Responsibilities")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"Tasks")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"Tasks")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"Ihre Aufgaben")]/../../../following-sibling::div/span/p/text() | //h4[contains(text(),"Ihre Aufgaben")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"Deine Aufgaben")]/../../../following-sibling::div/span/ul/li/text() | //h4[contains(text(),"What you will need")]/../../../following-sibling::div/span/ul/li/text()').getall()).strip()
+        except Exception as e:
+            print(e)
+        current_date_time = datetime.now()
+        mydict['date'] = current_date_time.strftime("%Y-%m-%d")
+        mydict['timeStamp'] = current_date_time.strftime("%H:%M:%S")
+        mydict['status_code'] = response.status_code
+        # mydict = {'name': name, 'location': location, 'emp': emp,'time': time,'published': published,'total_jobs': ''.join(total_jobs),'profile':profile,'description':des,'rating':final_rating,'five_star':five_star,'four_star':four_star,'three_star':three_star,'two_star':two_star,'one_star':one_star}
+        col2.insert_one(mydict)
+        col.update_one({'links': links}, {'$set': {'status': 'Complete'}})
+
+if __name__ == '__main__':
+    start = '0'
+    end = '100'
+    data(start, end)
+    
+#here refer code end
+    
+# this is refer code to fetch links
+
+# import pymongo
+# import requests
+# from scrapy.selector import Selector
+#
+# client = pymongo.MongoClient('mongodb://localhost:27017')
+# db = client['stepstone']
+# col = db['fnl']
+# for i in range(1, 18):
+#     url = f"https://www.togetherabroad.nl/index.php/page/advsearchvacs/bb/1?command=setpage&pageno={i}"
+#     headers = {
+#         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+#         'Accept-Encoding': 'gzip, deflate, br',
+#         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
+#         'Cache-Control': 'no-cache',
+#         'Cookie': 'cookiesAccepted=true; __utmz=1.1706017457.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); _ga=GA1.1.1489369764.1706017459; _hjSessionUser_1088389=eyJpZCI6ImFiNDVjNTNlLTA3ZTYtNTg0MC1iMDMzLWU5ZjRkZWYzMzFjNyIsImNyZWF0ZWQiOjE3MDYwMTc0NTkzMzUsImV4aXN0aW5nIjp0cnVlfQ==; OF=hqatk3lntljlch66esj33vj676; __utmc=1; acgroupswithpersist=nada; AS_RQUID_vacancySearchApp=Zbe4GvD51uaYKJzL; k8spersistent=dd58de6e0b8d83a6d4768105b514abdc|11f187638643e13d7bd1963991fac52b; acopendivids=actEqueryContainer; TS01a60b1e=01ab16cd1394165947b673bc252c12d2943e1490bbde27954836f0509a92062b7d4c4fac90564ee7c6d2c00bfc4646e91cdac7ef32e5acdc6f4d2e04477af852eee3f28b7b7e54b2cd30a5a68da3ca8c30689c63e04b29760a87525d683630ae90e63b5eaae5096603a042144d21994195aa8d202f; __utma=1.1760741873.1706017457.1706590607.1706596639.12; __utmt=1; _hjSession_1088389=eyJpZCI6IjM1YmI1NjJjLWJjYzMtNGU4OC04OGYzLTM5NDNiMzQ2MDMyNiIsImMiOjE3MDY1OTY2NDE0NjYsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; __utmb=1.4.10.1706596639; _ga_CR7Z7GYE6F=GS1.1.1706595506.11.1.1706596733.60.0.0; TS01888091=01ab16cd13cf3d800a670820e095f68b22f20ad2c9d574ecec80d633fea3e7aff98da60c4bdf0cc05e768908450d62ba28695219d6a4d70170a56ff2833e93653995e44f38; cookiesAccepted=true; k8spersistent=dd58de6e0b8d83a6d4768105b514abdc|11f187638643e13d7bd1963991fac52b',
+#         'Pragma': 'no-cache',
+#         'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+#         'Sec-Ch-Ua-Mobile': '?1',
+#         'Sec-Ch-Ua-Platform': '"Android"',
+#         'Sec-Fetch-Dest': 'document',
+#         'Sec-Fetch-Mode': 'navigate',
+#         'Sec-Fetch-Site': 'none',
+#         'Sec-Fetch-User': '?1',
+#         'Upgrade-Insecure-Requests': '1',
+#         'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
+#     }
+#
+#     response = requests.get(url=url, headers=headers)
+#     tree1 = Selector(text=response.text)
+#
+#
+#     def parse():
+#         main = tree1.xpath('//div[@class="itemContainer actIc actIcOdd"]')
+#         for i in main:
+#             job_name = i.xpath('.//h3[@class="h2 itemTitle actItemTitle"]//a//text()').get()
+#             links = i.xpath('.//h3[@class="h2 itemTitle actItemTitle"]//@href').get()
+#             mydic = {'name': job_name,
+#                      'links': links,
+#                      'status': 'pending'
+#                      }
+#             x = col.insert_one(mydic)
+#             print(x)
+#         next_page_xpath = tree1.xpath('//a[@class="pnNext actNext"]//@href').get()
+#         if next_page_xpath == '':
+#             exit()
+#     parse()
+
+#here this refer link over
+    
+    
